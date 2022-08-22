@@ -28,7 +28,6 @@ class QuestionController extends AbstractController
         $this->isDebug = $isDebug;
     }
 
-
     /**
      * @Route("/{page<\d+>}", name="app_homepage")
      */
@@ -93,10 +92,7 @@ class QuestionController extends AbstractController
      */
     public function edit(Question $question): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
-        if ($question->getOwner() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('You are not the owner!');
-        }
+        $this->denyAccessUnlessGranted('EDIT', $question);
 
         return $this->render('question/edit.html.twig', [
             'question' => $question,
