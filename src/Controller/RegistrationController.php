@@ -95,4 +95,12 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Account Verified! You can now log in.');
         return $this->redirectToRoute('app_login');
     }
+
+    /**
+     * @Route("/verify/resend", name="app_verify_resend_email")
+     */
+    public function resendVerifyEmail(): Response
+    {
+        return $this->render('security/resend_verify_email.html.twig');
+    }
 }
