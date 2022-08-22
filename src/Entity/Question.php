@@ -6,7 +6,6 @@ use App\Repository\AnswerRepository;
 use App\Repository\QuestionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -61,6 +60,12 @@ class Question
      * @ORM\OneToMany(targetEntity=QuestionTag::class, mappedBy="question")
      */
     private $questionTags;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="questions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $owner;
 
     public function __construct()
     {
@@ -215,6 +220,18 @@ class Question
                 $questionTag->setQuestion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
