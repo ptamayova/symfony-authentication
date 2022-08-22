@@ -31,7 +31,11 @@
                         </li>
                     </ul>
 
-                    <a href="#" class="btn btn-dark">Sign up</a>
+                    {% if is_granted('ROLE_USER')  %}
+                        <a href="{{ path('app_logout') }}" class="">Logout</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-dark">Sign up</a>
+                    {% endif %}
                 </div>
             </div>
         </nav>
