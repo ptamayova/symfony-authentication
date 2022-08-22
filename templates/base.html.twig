@@ -13,6 +13,12 @@
         {% endblock %}
     </head>
     <body>
+        {% for flash in app.flashes('success') %}
+            <div class="alert alert-success">{{ flash }}</div>
+        {% endfor %}
+        {% for flash in app.flashes('error') %}
+            <div class="alert alert-danger">{{ flash }}</div>
+        {% endfor %}
         <nav class="navbar navbar-expand-lg navbar-light bg-light px-1"
             {{ is_granted('ROLE_PREVIOUS_ADMIN') ? 'style="background-color: red !important"' }}>
             <div class="container-fluid">
@@ -65,7 +71,7 @@
                         </div>
                     {% else %}
                         <a class="nav-link text-black-50" href="{{ path('app_login') }}">Log In</a>
-                        <a href="#" class="btn btn-dark">Sign up</a>
+                        <a href="{{ path('app_register') }}" class="btn btn-dark">Sign up</a>
                     {% endif %}
                 </div>
             </div>
