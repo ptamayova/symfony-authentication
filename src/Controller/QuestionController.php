@@ -10,15 +10,17 @@ use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class QuestionController extends AbstractController
 {
-    private $logger;
-    private $isDebug;
+    private LoggerInterface $logger;
+    private bool $isDebug;
 
     public function __construct(LoggerInterface $logger, bool $isDebug)
     {
@@ -30,7 +32,7 @@ class QuestionController extends AbstractController
     /**
      * @Route("/{page<\d+>}", name="app_homepage")
      */
-    public function homepage(QuestionRepository $repository, int $page = 1)
+    public function homepage(QuestionRepository $repository, int $page = 1): Response
     {
         $queryBuilder = $repository->createAskedOrderedByNewestQueryBuilder();
 
@@ -45,8 +47,9 @@ class QuestionController extends AbstractController
 
     /**
      * @Route("/questions/new")
+     * @IsGranted("ROLE_USER")
      */
-    public function new()
+    public function new(): Response
     {
         return new Response('Sounds like a GREAT feature for V2!');
     }
@@ -54,7 +57,7 @@ class QuestionController extends AbstractController
     /**
      * @Route("/questions/{slug}", name="app_question_show")
      */
-    public function show(Question $question)
+    public function show(Question $question): Response
     {
         if ($this->isDebug) {
             $this->logger->info('We are in debug mode!');
@@ -68,7 +71,7 @@ class QuestionController extends AbstractController
     /**
      * @Route("/questions/{slug}/vote", name="app_question_vote", methods="POST")
      */
-    public function questionVote(Question $question, Request $request, EntityManagerInterface $entityManager)
+    public function questionVote(Question $question, Request $request, EntityManagerInterface $entityManager): RedirectResponse
     {
         $direction = $request->request->get('direction');
 

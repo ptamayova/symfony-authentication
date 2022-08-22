@@ -26,7 +26,6 @@ security:
                 username_parameter: email
                 password_parameter: password
                 enable_csrf: true
-
             lazy: true
             provider: app_user_provider
             custom_authenticator:
