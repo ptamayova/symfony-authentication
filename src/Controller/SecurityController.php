@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Endroid\QrCode\Builder\Builder;
 
 class SecurityController extends BaseController
 {
@@ -40,13 +41,28 @@ class SecurityController extends BaseController
     public function enable2fa(
         TotpAuthenticatorInterface $totpAuthenticator,
         EntityManagerInterface $entityManager
-    )
+    ): Response
     {
         $user = $this->getUser();
         if (!$user->isTotpAuthenticationEnabled()) {
             $user->setTotpSecret($totpAuthenticator->generateSecret());
             $entityManager->flush();
         }
+
+        return $this->render('security/enable2fa.html.twig');
     }
 
+    /**
+     * @Route("/authentication/2fa/qr-code", name="app_qr_code")
+     * @IsGranted("ROLE_USER")
+     */
+    public function displayGoogleAuthenticatorQrCode(TotpAuthenticatorInterface $totpAuthenticator)
+    {
+        $qrCodeContent = $totpAuthenticator->getQRContent($this->getUser());
+        $result = Builder::create()
+            ->data($qrCodeContent)
+            ->build();
+
+        return new Response($result->getString(), 200, ['Content-Type' => 'image/png']);
+    }
 }
